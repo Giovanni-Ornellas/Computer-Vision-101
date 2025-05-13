@@ -148,26 +148,50 @@ def segmentar_hsv(imagem):
     cv2.destroyAllWindows()
 
 def combinar_segmentos_hsv(imagem):
+    """
+    @brief Exibe os canais HSV separadamente e recombina a imagem.
 
+    @details
+    Esta função recebe uma imagem no formato BGR (padrão OpenCV), converte-a para
+    o espaço de cores HSV e separa os canais de Matiz (H), Saturação (S) e Valor (V).
+    Após exibir os canais individualmente, a função recombina os canais com
+    cv2.merge() e converte novamente para o espaço BGR para exibição final da imagem
+    recomposta.
+
+    Esta função é útil para visualizar e verificar o efeito de separar e combinar canais
+    no espaço HSV, e garante que a recombinação preserve as características visuais da imagem.
+
+    @param imagem: Imagem colorida no formato BGR.
+
+    @return Nenhum valor é retornado.
+    """
 
     # Converte a imagem de BGR para HSV (Hue, Saturation, Value)
     imagem = cv2.cvtColor(imagem, cv2.COLOR_BGR2HSV)
 
-    # Separa os três canais da imagem HSV
+    # Separa os três canais HSV (matiz, saturação, valor)
     matiz, saturação, valor = cv2.split(imagem)
 
-    # Exibe cada canal separadamente
-    cv2.imshow("Canal H", matiz)        # Matiz: tipo da cor (0–179)
+    # Exibe separadamente os canais HSV
+    cv2.imshow("Canal H", matiz)        # Matiz: tonalidade da cor (0–179)
     cv2.imshow("Canal S", saturação)    # Saturação: intensidade da cor (0–255)
     cv2.imshow("Canal V", valor)        # Valor: brilho/luminosidade (0–255)
 
-    imagem = cv2.merge((matiz,saturação,valor))
+    # Recombina os canais HSV em uma imagem única
+    imagem = cv2.merge((matiz, saturação, valor))
+
+    # Converte de volta para BGR para exibir como imagem colorida
     imagem = cv2.cvtColor(imagem, cv2.COLOR_HSV2BGR)
 
+    # Exibe a imagem recombinada
     cv2.imshow("Imagem", imagem)
 
+    # Espera o pressionamento de uma tecla
     cv2.waitKey(0)
+
+    # Fecha todas as janelas
     cv2.destroyAllWindows()
+
 
 # Chamada das funções
 segmentar_imagem(imagem)

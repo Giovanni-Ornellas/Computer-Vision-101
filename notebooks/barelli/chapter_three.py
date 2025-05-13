@@ -70,4 +70,3 @@ def reproduzir_video():
     cv2.destroyAllWindows()
 
 
-carrega_imagem()
