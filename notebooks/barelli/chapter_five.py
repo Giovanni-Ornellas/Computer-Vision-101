@@ -331,19 +331,175 @@ def equalizar_histograma():
     # Mostra os gráficos
     plt.show()
 
+def rotacionar():
+    """
+    @brief Rotaciona uma imagem em 90 graus no sentido horário.
+
+    @details
+    Esta função carrega uma imagem em tons de cinza do caminho especificado,
+    calcula a matriz de rotação usando o centro da imagem como ponto de referência
+    e aplica a transformação afim (rotação) com OpenCV. A imagem resultante é exibida
+    em uma nova janela.
+
+    A função inclui uma verificação para garantir que a imagem foi carregada corretamente.
+    O processo usa rotação de 90 graus no sentido horário com escala igual a 1.
+
+    @return Nenhum valor é retornado. A imagem rotacionada é exibida em tela.
+    """
+
+    # Lê a imagem em escala de cinza (modo 0)
+    imagem_original = cv2.imread("data/raw/first_image.jpg", 0)
+
+    # Verifica se a imagem foi carregada corretamente
+    if imagem_original is None:
+        print("Erro: imagem não encontrada ou caminho inválido.")
+        return
+
+    # Obtém altura e largura da imagem
+    total_de_linhas, total_de_colunas = imagem_original.shape
+
+    # Cria matriz de rotação em torno do centro da imagem (ângulo 90°)
+    matriz = cv2.getRotationMatrix2D((total_de_colunas / 2, total_de_linhas / 2), 90, 1)
+
+    # Aplica a rotação à imagem
+    imagem_rotacionada = cv2.warpAffine(imagem_original, matriz, (total_de_colunas, total_de_linhas))
+
+    # Exibe o resultado
+    cv2.imshow("Resultado", imagem_rotacionada)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+def transladar():
+    """
+    @brief Aplica uma translação (deslocamento) à imagem carregada.
+
+    @details
+    Esta função lê uma imagem colorida e aplica uma transformação afim (translação),
+    deslocando a imagem 100 pixels para a direita (eixo X) e 100 pixels para baixo (eixo Y).
+    A translação é definida por uma matriz 2x3, aplicada com a função `cv2.warpAffine()`.
+
+    A imagem deslocada é então exibida em uma janela OpenCV.
+
+    @note
+    O deslocamento aplicado é fixo: (x + 100, y + 100). Para usar outros valores,
+    é necessário alterar a matriz de translação.
+
+    @return Nenhum valor é retornado. A imagem transladada é apenas exibida em tela.
+    """
+
+    # Carrega a imagem em formato BGR
+    imagem_original = cv2.imread("data/raw/first_image.jpg")
+
+    # Verifica se a imagem foi carregada corretamente
+    if imagem_original is None:
+        print("Erro: imagem não encontrada ou caminho inválido.")
+        return
+
+    # Obtém as dimensões da imagem (altura e largura)
+    total_de_linhas, total_de_colunas = imagem_original.shape[:2]
+
+    # Define a matriz de translação: move 100 px para a direita e 100 px para baixo
+    matriz = np.array([[1, 0, 100],   # [1, 0, deslocamento X]
+                       [0, 1, 100]],  # [0, 1, deslocamento Y]
+                      dtype=np.float32)
+
+    # Aplica a translação usando transformação afim
+    imagem_deslocada = cv2.warpAffine(imagem_original, matriz, (total_de_colunas, total_de_linhas))
+
+    # Exibe a imagem transladada
+    cv2.imshow("Resultado", imagem_deslocada)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+def escalonar():
+    """
+    @brief Redimensiona (escalona) uma imagem, ampliando-a em 2x.
+
+    @details
+    Esta função carrega uma imagem colorida e a amplia em 2 vezes seu tamanho original
+    tanto na largura (eixo X) quanto na altura (eixo Y). Para preservar melhor a nitidez
+    da imagem durante o redimensionamento, é utilizada a interpolação bicúbica (`cv2.INTER_CUBIC`),
+    que calcula novos valores de pixels considerando uma vizinhança de 4x4.
+
+    A imagem ampliada é exibida em uma janela com o título "Resultado".
+
+    @note
+    Ao ampliar uma imagem, é comum ocorrer suavização (borramento) devido à interpolação,
+    especialmente se a imagem original tiver baixa resolução. A escolha do tipo de interpolação
+    influencia diretamente na nitidez percebida.
+
+    @return Nenhum valor é retornado. A imagem ampliada é apenas exibida.
+    """
+
+    # Carrega a imagem original colorida
+    imagem_original = cv2.imread("data/raw/first_image.jpg")
+
+    # Verifica se a imagem foi carregada corretamente
+    if imagem_original is None:
+        print("Erro: imagem não encontrada.")
+        return
+
+    # Redimensiona a imagem com fator 2x usando interpolação bicúbica
+    imagem_modificada = cv2.resize(
+        imagem_original, None, fx=2, fy=2, 
+        interpolation=cv2.INTER_CUBIC
+    )
+
+    # Exibe a imagem redimensionada
+    cv2.imshow("Resultado", imagem_modificada)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+def ajustar_perspectiva():
+
+    # Carrega a imagem da pista
+    imagem = cv2.imread("data/raw/fourth_image.jpeg")
+
+    # Define os 4 pontos da área preta (ajuste conforme necessário)
+    pontos_iniciais = np.float32([
+        [80, 100],
+        [1230, 80],
+        [60, 720],
+        [1240, 730]
+    ])
+
+    # Define os 4 pontos do plano de saída (retângulo final)
+    pontos_finais = np.float32([
+        [0, 0],
+        [800, 0],
+        [0, 600],
+        [800, 600]
+    ])
+
+    # Gera a matriz de transformação
+    matriz = cv2.getPerspectiveTransform(pontos_iniciais, pontos_finais)
+
+    # Aplica a transformação de perspectiva
+    imagem_transformada = cv2.warpPerspective(imagem, matriz, (800, 600))
+
+    # Exibe os resultados
+    cv2.imshow("Original", imagem)
+    cv2.imshow("Transformada", imagem_transformada)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 
 def main():
-    imprimir_pixel(imagem_rgb)
-    imprimir_pixel(imagem_cinza)
-    imprimir_canal(imagem_rgb)
-    modifica_pixel(imagem_rgb)
-    acessar_informações(imagem_rgb)
-    converter_para_bmp(imagem_rgb)
-    plotar_manualmente()
-    plotar_binário()
-    plotar_cinza(imagem_cinza)
-    plotar_colorido()
-    equalizar_histograma()
+    # imprimir_pixel(imagem_rgb)
+    # imprimir_pixel(imagem_cinza)
+    # imprimir_canal(imagem_rgb)
+    # modifica_pixel(imagem_rgb)
+    # acessar_informações(imagem_rgb)
+    # converter_para_bmp(imagem_rgb)
+    # plotar_manualmente()
+    # plotar_binário()
+    # plotar_cinza(imagem_cinza)
+    # plotar_colorido()
+    # equalizar_histograma()
+    # rotacionar()
+    # transladar()
+    # escalonar()
+    ajustar_perspectiva()
 
 if __name__ == "__main__":
     main()
