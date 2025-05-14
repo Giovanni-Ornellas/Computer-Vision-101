@@ -451,6 +451,22 @@ def escalonar():
     cv2.destroyAllWindows()
 
 def ajustar_perspectiva():
+    """
+    @brief Corrige a perspectiva da imagem de uma pista com base em 4 pontos manuais.
+
+    @details
+    Esta função carrega uma imagem da pista e aplica uma transformação de perspectiva,
+    convertendo a área definida por 4 pontos iniciais (obtidos visualmente) em uma visão
+    retangular padronizada. Essa técnica é útil para eliminar distorções de perspectiva
+    quando a imagem é capturada com ângulo inclinado.
+
+    A transformação é feita com cv2.getPerspectiveTransform e aplicada com cv2.warpPerspective.
+
+    - Os pontos iniciais devem corresponder aos 4 cantos da pista preta no plano original.
+    - Os pontos finais definem o plano de saída (retângulo retificado).
+    
+    @return Nenhum valor é retornado. A função exibe as imagens original e transformada.
+    """
 
     # Carrega a imagem da pista
     imagem = cv2.imread("data/raw/fourth_image.jpeg")
