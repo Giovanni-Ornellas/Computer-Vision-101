@@ -499,6 +499,129 @@ def ajustar_perspectiva():
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
+def somar_imagens():
+    """
+    @brief Soma duas imagens e exibe o resultado.
+
+    @details
+    Esta função realiza a leitura de duas imagens do disco, redimensiona a segunda imagem para
+    ter o mesmo tamanho da primeira (caso necessário) e aplica uma operação de soma pixel a pixel.
+    O resultado da soma é então exibido em uma janela.
+
+    A função verifica se as imagens foram carregadas corretamente antes de continuar. Caso uma delas
+    não seja encontrada, a execução é interrompida com uma mensagem de erro.
+
+    A função usa cv2.add() para somar as imagens, garantindo saturação dos valores de cor (valores
+    maiores que 255 são truncados para 255).
+
+
+    @return Nenhum valor é retornado. A imagem somada é exibida em uma janela.
+    """
+
+    # Lê as duas imagens do disco
+    primeira_imagem = cv2.imread("data/raw/first_image.jpg")
+    segunda_imagem  = cv2.imread("data/raw/second_image.jpg")
+
+    # Verifica se ambas foram carregadas com sucesso
+    if primeira_imagem is None or segunda_imagem is None:
+        print("Erro: Imagem não encontrada.")
+        return
+
+    # Redimensiona a segunda imagem para ter o mesmo tamanho da primeira
+    segunda_imagem = cv2.resize(segunda_imagem, (primeira_imagem.shape[1], primeira_imagem.shape[0]))
+
+    # Soma pixel a pixel as duas imagens
+    imagem_somada = cv2.add(primeira_imagem, segunda_imagem)
+
+    # Exibe a imagem resultante da soma
+    cv2.imshow("Resultado", imagem_somada)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+def mudar_contraste():
+    """
+    @brief Altera o brilho da imagem e plota os histogramas.
+
+    @details
+    Esta função carrega uma imagem e gera duas variações:
+    uma imagem mais clara e uma mais escura. Isso é feito adicionando e subtraindo
+    um valor constante dos valores de intensidade de cada pixel (com `cv2.add()`).
+
+    Em seguida, plota os histogramas das três versões:
+    - Original
+    - Clara (mais brilho)
+    - Escura (menos brilho)
+
+    Essa técnica não altera o contraste diretamente, mas sim o brilho da imagem.
+    Para modificar o contraste, seria necessário aplicar uma multiplicação escalar nos pixels.
+
+    @return Nenhum valor é retornado. Os histogramas são exibidos com Matplotlib.
+    """
+
+    # Carrega a imagem original
+    imagem_original = cv2.imread("data/raw/second_image.jpg")
+
+    # Gera uma imagem mais clara e uma mais escura
+    imagem_clara  = cv2.add(imagem_original, 40)   # Aumenta brilho
+    imagem_escura = cv2.add(imagem_original, -40)  # Diminui brilho
+
+    # Plota o histograma da imagem original
+    plt.hist(imagem_original.ravel(), 256, [0, 256])
+    plt.title("Histograma - Original")
+
+    # Plota o histograma da imagem mais clara
+    plt.figure()
+    plt.hist(imagem_clara.ravel(), 256, [0, 256])
+    plt.title("Histograma - Mais Clara")
+
+    # Plota o histograma da imagem mais escura
+    plt.figure()
+    plt.hist(imagem_escura.ravel(), 256, [0, 256])
+    plt.title("Histograma - Mais Escura")
+
+    # Exibe os gráficos
+    plt.show()
+
+    # Fecha qualquer janela aberta do OpenCV (por segurança)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+def misturar_imagens():
+    """
+    @brief Realiza a mistura de duas imagens com pesos diferentes.
+
+    @details
+    Esta função lê duas imagens do disco e redimensiona a segunda imagem
+    para que tenha as mesmas dimensões da primeira. Em seguida, combina
+    as duas imagens utilizando a função `cv2.addWeighted()`.
+
+    A operação de mistura é feita com os seguintes pesos:
+    - 0.6 para a primeira imagem
+    - 0.3 para a segunda imagem
+    - 0 como deslocamento (bias)
+
+    A soma ponderada resulta em uma nova imagem com efeito de sobreposição.
+
+    @return Nenhum valor é retornado; a imagem resultante é exibida na tela.
+    """
+
+    # Lê as duas imagens do disco
+    primeira_imagem = cv2.imread("data/raw/first_image.jpg")
+    segunda_imagem  = cv2.imread("data/raw/second_image.jpg")
+
+    # Redimensiona a segunda imagem para o tamanho da primeira
+    segunda_imagem = cv2.resize(segunda_imagem, (primeira_imagem.shape[1], primeira_imagem.shape[0]))
+
+    # Mistura as imagens com pesos 0.6 e 0.3 (respectivamente)
+    imagem_misturada = cv2.addWeighted(
+        primeira_imagem, 0.6, segunda_imagem, 0.6, 1
+    )
+
+    # Exibe a imagem resultante
+    cv2.imshow("Resultado", imagem_misturada)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
 
 def main():
     # imprimir_pixel(imagem_rgb)
@@ -515,7 +638,10 @@ def main():
     # rotacionar()
     # transladar()
     # escalonar()
-    ajustar_perspectiva()
+    # ajustar_perspectiva()
+    # somar_imagens()
+    # mudar_contraste()
+    misturar_imagens()
 
 if __name__ == "__main__":
     main()
