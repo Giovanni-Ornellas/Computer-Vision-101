@@ -2,8 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-imagem_rgb = cv2.imread("data/raw/third_image.jpeg")
-imagem_rgb = cv2.resize(imagem_rgb, (0, 0), fx=0.6, fy=0.6)
+imagem_rgb = cv2.imread("data/raw/nineth_image.jpeg")
 imagem_cinza = cv2.cvtColor(imagem_rgb, cv2.COLOR_BGR2GRAY)
 
 def imprimir_pixel(imagem):
@@ -124,7 +123,7 @@ def converter_para_bmp(imagem):
     """
 
     # 1. Salva a imagem colorida no formato BMP
-    cv2.imwrite("data/processed/Segunda-Guerra-Colorida.bmp", imagem)
+    cv2.imwrite("data/processed/Caneca.bmp", imagem)
 
     # 2. Converte para escala de cinza
     imagem_cinza = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
@@ -133,7 +132,7 @@ def converter_para_bmp(imagem):
     _, imagem_binaria = cv2.threshold(imagem_cinza, 127, 255, cv2.THRESH_BINARY)
 
     # 4. Salva a imagem binária como BMP
-    cv2.imwrite("data/processed/Segunda-Guerra-PretoBranco.bmp", imagem_binaria)
+    cv2.imwrite("data/processed/Caneca-PretoBranco.bmp", imagem_binaria)
 
     # 5. Mostra a imagem binária
     cv2.imshow("Imagem binária (preto e branco)", imagem_binaria)
@@ -629,7 +628,7 @@ def main():
     # imprimir_canal(imagem_rgb)
     # modifica_pixel(imagem_rgb)
     # acessar_informações(imagem_rgb)
-    # converter_para_bmp(imagem_rgb)
+     converter_para_bmp(imagem_rgb)
     # plotar_manualmente()
     # plotar_binário()
     # plotar_cinza(imagem_cinza)
@@ -641,7 +640,7 @@ def main():
     # ajustar_perspectiva()
     # somar_imagens()
     # mudar_contraste()
-    misturar_imagens()
+    # misturar_imagens()
 
 if __name__ == "__main__":
     main()

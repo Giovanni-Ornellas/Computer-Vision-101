@@ -1,41 +1,55 @@
 import cv2
+import numpy as np
 
-imagem = cv2.imread("data/raw/fourth_image.jpg")  
+imagem = cv2.imread("data/raw/nineth_image.png",0)
+imagem = cv2.resize(imagem, (0, 0), fx=0.5, fy=0.5)
 
+import cv2
 
-def converter_para_bmp(imagem):
+def converter_para_bmp_binaria(limiar=127):
     """
-    @brief Salva a imagem como BMP colorida e também como bitmap preto e branco.
-
-    @details
-    A função salva a imagem original no formato .bmp e também gera uma versão em
-    preto e branco (binária) usando limiarização (threshold). Ambas as versões
-    são salvas em disco e exibidas com OpenCV.
-
-    @param imagem: Imagem colorida (BGR) carregada com OpenCV.
-    @return Nenhum valor é retornado.
+    Converte uma imagem para formato BMP binário (preto e branco).
+    
+    Parâmetros:
+        caminho_entrada (str): Caminho da imagem de entrada.
+        caminho_saida (str): Caminho onde a imagem binária será salva.
+        limiar (int): Valor de limiar para binarização (padrão: 127).
     """
+    # Carrega a imagem em escala de cinza
+    imagem_cinza = cv2.imread("data/raw/nineth_image.png", cv2.IMREAD_GRAYSCALE)
 
-    # 2. Converte para escala de cinza
-    imagem_cinza = cv2.cvtColor(imagem, cv2.COLOR_BGR2GRAY)
+    # Verifica se a imagem foi carregada
+    if imagem_cinza is None:
+        raise FileNotFoundError("Imagem de entrada não encontrada.")
 
-    # 3. Aplica threshold para obter imagem binária (preto e branco)
+    # Aplica a binarização
     _, imagem_binaria = cv2.threshold(imagem_cinza, 127, 255, cv2.THRESH_BINARY)
 
-    # 4. Salva a imagem binária como BMP
-    cv2.imwrite("data/processed/Nova.bmp", imagem_binaria)
+    # Salva no formato BMP
+    cv2.imwrite("data/processed/Caneca-PretaBranca.bmp", imagem_binaria)
 
-    # 5. Mostra a imagem binária
-    cv2.imshow("Imagem binária (preto e branco)", imagem_binaria)
+
+
+
+def erosão():
+    imagem = cv2.imread("data/processed/Caneca-PretaBranca.bmp",0)
+    elemento_estruturante = cv2.getStructuringElement(
+        cv2.MORPH_ELLIPSE, (5,5)
+    )
+    imagem_processada = cv2.erode(
+        imagem, elemento_estruturante, iterations = 5
+    )
+
+    # Exibe as imagens
+    cv2.imshow("Original", imagem)
+    cv2.imshow("Tratada", imagem_processada)
+
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-def erosão(imagem):
-    pass
-
 
 def main():
-    converter_para_bmp(imagem)
+   erosão()
 
 if __name__ == "__main__":
     main()
